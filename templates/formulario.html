@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}
+Fazer upload de arquivo
+{% endblock title %}
+{% block content %}
+<form action={{url_for(endpoint)}} method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="file">Arquivo</label>
+        <input type="file" name="file" class="form-control-file">
+    </div>
+    <button type="submit" class="btn btn-primary">Enviar</button>
+</form>
+{% endblock content %}
