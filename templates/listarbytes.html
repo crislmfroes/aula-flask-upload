@@ -7,20 +7,18 @@ Listagem de arquivos
     <thead>
         <tr>
             <th scope="col">Código</th>
-            <th scope="col">Caminho</th>
-            <th scope="col">Opções</th>
+            <th scope="col">Tamanho</th>
         </tr>
     </thead>
     <tbody>
         {% for arquivo in arquivos %}
         <tr>
             <th scope="row">{{arquivo.cod}}</th>
-            <td>{{arquivo.caminho}}</td>
-            <td><a href={{url_for('static', filename=arquivo.caminho)}} class="btn btn-primary">Visualizar</a></td>
+            <td>{{sys.getsizeof(arquivo.data)}}B</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<a href={{url_for('upload')}} class="btn btn-primary">Upload</a>
-<a href={{url_for('binlistar')}} class="btn btn-primary">Listagem de Arquivos Binários</a>
+<a href={{url_for('binupload')}} class="btn btn-primary">Upload de arquivo binário</a>
+<a href={{url_for('listar')}} class="btn btn-primary">Listagem de Arquivos</a>
 {% endblock %}

@@ -1,5 +1,5 @@
 class Arquivo:
-    def __init__(self, caminho, cod=None):
+    def __init__(self, caminho=None, cod=None):
         self.caminho = caminho
         self.cod = cod
     
@@ -10,7 +10,7 @@ class Arquivo:
             return None
     
     def _set_caminho(self, caminho):
-        if type(caminho) != str:
+        if type(caminho) != str and caminho is not None:
             raise ValueError()
         self._caminho = caminho
     
@@ -28,3 +28,22 @@ class Arquivo:
         self._cod = cod
     
     cod = property(_get_cod, _set_cod)
+
+class ArquivoBinario(Arquivo):
+    def __init__(self, cod=None, data=None):
+        super(ArquivoBinario, self).__init__(cod=cod)
+        self.data = data
+
+    def _get_data(self):
+        try:
+            return self._data
+        except AttributeError:
+            return None
+    
+    def _set_data(self, data):
+        print(type(data))
+        if type(data) != bytes and data is not None:
+            raise ValueError()
+        self._data = data
+    
+    data = property(_get_data, _set_data)

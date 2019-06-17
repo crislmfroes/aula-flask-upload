@@ -1,13 +1,15 @@
 import os
+import sys
 
 from flask import Flask, render_template, request, redirect
 from flask.helpers import url_for
 from werkzeug.utils import secure_filename
 
-from arquivo import Arquivo
-from arquivo_dao import ArquivoDao
+from arquivo import Arquivo, ArquivoBinario
+from arquivo_dao import ArquivoDao, ArquivoBinarioDao
 
 arquivo_dao = ArquivoDao()
+arquivo_dao_bin = ArquivoBinarioDao()
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -27,10 +29,25 @@ def upload():
             return redirect(url_for('listar'))
     return render_template('formulario.html', endpoint=request.endpoint)
 
+@app.route('/binupload', methods=['GET', 'POST'])
+def binupload():
+    if request.method == 'POST':
+        arquivo = request.files['file']
+        if arquivo and permitido(arquivo.filename):
+            arquivo_data = ArquivoBinario(data=arquivo.read())
+            arquivo_dao_bin.inserir(arquivo_data)
+            return redirect(url_for('binlistar'))
+    return render_template('formulario.html', endpoint=request.endpoint)
+
 @app.route('/listar')
 def listar():
     arquivos = arquivo_dao.listar()
     return render_template('listar.html', arquivos=arquivos)
+
+@app.route('/binlistar')
+def binlistar():
+    arquivos = arquivo_dao_bin.listar()
+    return render_template('listarbytes.html', arquivos=arquivos, sys=sys)
 
 def main():
     app.env = 'development'
