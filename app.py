@@ -17,6 +17,13 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 def permitido(name):
     return '.' in name and name.split('.')[-1].lower() in ['zip', 'png']
 
+@app.before_first_request
+def init_fun():
+    if not os.path.isdir(os.path.join('static')):
+        os.mkdir(os.path.join('static'))
+        if not os.path.isdir(os.path.join('static', 'uploads')):
+            os.mkdir(os.path.join('static', 'uploads'))
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
