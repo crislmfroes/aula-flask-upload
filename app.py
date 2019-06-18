@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 from flask import Flask, render_template, request, redirect
 from flask.helpers import url_for
@@ -15,7 +16,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 def permitido(name):
-    return '.' in name and name.split('.')[-1].lower() in ['zip', 'png']
+    return '.' in name and name.split('.')[-1].lower() in ['zip', 'png', 'pdf', 'txt']
 
 @app.before_first_request
 def init_fun():
@@ -41,7 +42,8 @@ def binupload():
     if request.method == 'POST':
         arquivo = request.files['file']
         if arquivo and permitido(arquivo.filename):
-            arquivo_data = ArquivoBinario(data=arquivo.read())
+            extension = arquivo.filename.split('.')[-1]
+            arquivo_data = ArquivoBinario(data=arquivo.read(), extension=extension)
             arquivo_dao_bin.inserir(arquivo_data)
             return redirect(url_for('binlistar'))
     return render_template('formulario.html', endpoint=request.endpoint)
@@ -55,6 +57,18 @@ def listar():
 def binlistar():
     arquivos = arquivo_dao_bin.listar()
     return render_template('listarbytes.html', arquivos=arquivos, sys=sys)
+
+@app.route('/binmostrar/<int:cod>')
+def binmostrar(cod):
+    arquivo = arquivo_dao_bin.buscar(cod)
+    filename = str(time.time()).replace('.', '_') + '.' + arquivo.extension
+    with open(os.path.join('static', 'uploads', filename), 'wb') as f:
+        f.write(arquivo.data)
+        f.close()
+    return redirect(url_for('static', filename="{}/{}".format(
+        app.config['UPLOAD_FOLDER'],
+        filename
+    )))
 
 def main():
     app.env = 'development'

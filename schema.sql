@@ -5,5 +5,6 @@
 
 create table ArquivoBinario(
     cod serial primary key,
-    data bytea
+    data bytea,
+    extension varchar(10)
 );

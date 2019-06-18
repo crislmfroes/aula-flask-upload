@@ -30,9 +30,10 @@ class Arquivo:
     cod = property(_get_cod, _set_cod)
 
 class ArquivoBinario(Arquivo):
-    def __init__(self, cod=None, data=None):
+    def __init__(self, cod=None, data=None, extension=None):
         super(ArquivoBinario, self).__init__(cod=cod)
         self.data = data
+        self.extension = extension
 
     def _get_data(self):
         try:
@@ -47,3 +48,16 @@ class ArquivoBinario(Arquivo):
         self._data = data
     
     data = property(_get_data, _set_data)
+
+    def _get_extension(self):
+        try:
+            return self._extension
+        except AttributeError:
+            return None
+    
+    def _set_extension(self, extension):
+        if type(extension) != str and extension is not None:
+            raise ValueError()
+        self._extension = extension
+    
+    extension = property(_get_extension, _set_extension)

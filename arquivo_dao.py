@@ -51,11 +51,24 @@ class ArquivoBinarioDao(Dao):
         try:
             with psycopg2.connect(self._connection_string) as conn:
                 cursor = conn.cursor()
-                sql = "INSERT INTO ArquivoBinario(data) VALUES(%s) RETURNING cod"
-                cursor.execute(sql, (arquivoBinario.data,))
+                sql = "INSERT INTO ArquivoBinario(data, extension) VALUES(%s, %s) RETURNING cod"
+                cursor.execute(sql, (arquivoBinario.data, arquivoBinario.extension))
                 arquivoBinario.cod = cursor.fetchone()[0]
         except BaseException as e:
             print("Erro ao inserir arquivo no banco ...")
+            raise e
+
+    def buscar(self, cod):
+        try:
+            with psycopg2.connect(self._connection_string) as conn:
+                cursor = conn.cursor()
+                sql = "SELECT * FROM ArquivoBinario WHERE cod = %s"
+                cursor.execute(sql, (cod,))
+                row = cursor.fetchone()
+                arquivo = ArquivoBinario(cod=cod, data=bytes(row[1]), extension=row[2])
+                return arquivo
+        except BaseException as e:
+            print("Erro ao consultar banco ...")
             raise e
         
     def listar(self):
@@ -67,7 +80,7 @@ class ArquivoBinarioDao(Dao):
                 rows = cursor.fetchall()
                 arquivos = list()
                 for row in rows:
-                    arquivo = ArquivoBinario(data=bytes(row[1]), cod=row[0])
+                    arquivo = ArquivoBinario(data=bytes(row[1]), cod=row[0], extension=row[2])
                     arquivos.append(arquivo)
             return arquivos
         except BaseException as e:

@@ -8,6 +8,7 @@ Listagem de arquivos
         <tr>
             <th scope="col">Código</th>
             <th scope="col">Tamanho</th>
+            <th scope="col">Opções</th>
         </tr>
     </thead>
     <tbody>
@@ -15,6 +16,7 @@ Listagem de arquivos
         <tr>
             <th scope="row">{{arquivo.cod}}</th>
             <td>{{sys.getsizeof(arquivo.data)}}B</td>
+            <td><a href={{url_for('binmostrar', cod=arquivo.cod)}} class="btn btn-primary">Visualizar</a></td>
         </tr>
         {% endfor %}
     </tbody>
